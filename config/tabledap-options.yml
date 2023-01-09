@@ -1,0 +1,128 @@
+# ERDDAP MakeAGraph options
+image_types:
+    - smallPdf
+    - pdf
+    - largePdf
+    - smallPng
+    - png
+    - largePng
+    - transparentPng
+legend_options:
+    - Bottom
+    - Off
+    - Only
+line_styles:
+    - lines
+    - linesAndMarkers
+    - markers
+    - sticks
+    - vectors
+marker_types:
+    - None
+    - Plus
+    - X
+    - Dot
+    - Square
+    - Filled Square
+    - Circle
+    - Filled Circle
+    - Up Triangle
+    - Filled Up Triangle
+colors:
+    white: 'FFFFFF'
+    light grey: 'CCCCCC'
+    grey: '999999'
+    dark grey: '666666'
+    black: '000000'
+    red: 'FF0000'
+    orange: 'FF9900'
+    yellow: 'FFFF00'
+    light green: '99FF00'
+    green: '00FF00'
+    blue green: '00FF99'
+    cyan: '00FFFF'
+    blue: '0099FF'
+    dark blue: '0000FF'
+    purple: '9900FF'
+    pink: 'FF00FF'
+    light pink: 'FF99FF'
+opacities:
+    - '00'
+    - '11'
+    - '22'
+    - '33'
+    - '44'
+    - '55'
+    - '66'
+    - '77'
+    - '88'
+    - '99'
+    - 'AA'
+    - 'BB'
+    - 'CC'
+    - 'DD'
+    - 'EE'
+    - 'FF'
+continuous_options:
+    - C
+    - D
+scale_options:
+    - Linear
+    - Log
+color_bars:
+    - BlackBlueWhite
+    - BlackGreenWhite
+    - BlackRedWhite
+    - BlackWhite
+    - BlueWhiteRed
+    - BlueWideWhiteRed
+    - LightRainbow
+    - Ocean
+    - OceanDepth
+    - Rainbow
+    - Rainbow2
+    - Rainfall
+    - ReverseRainbow
+    - RedWhiteBlue
+    - RedWhiteBlue2
+    - RedWideWhiteBlue
+    - Spectrum
+    - Topography
+    - TopographyDepth
+    - WhiteBlueBlack
+    - WhiteGreenBlack
+    - WhiteRedBlack
+    - WhiteBlack
+    - YellowRed
+    - KT_algae
+    - KT_amp
+    - KT_balance
+    - KT_curl
+    - KT_deep
+    - KT_delta
+    - KT_dense
+    - KT_gray
+    - KT_haline
+    - KT_ice
+    - KT_matter
+    - KT_oxy
+    - KT_phase
+    - KT_solar
+    - KT_speed
+    - KT_tempo
+    - KT_thermal
+    - KT_turbid
+zoom_levels:
+    - in
+    - in2
+    - in8
+    - out
+    - out2
+    - out8
+operators:
+    - '='
+    - '!='
+    - '>'
+    - '>='
+    - '<'
+    - '<='
