@@ -5,7 +5,7 @@ requests and downloading the resulting images.
 
 # Contents
 + [Installation](#installation)
-+ [Wiki](https://github.com/kerfoot/erddapgraph/wiki)
++ [Wiki](https://github.com/kerfoot/erddapgraph/wiki/erddapgraph-Home)
 + [Contact](#contact)
 
 ## Installation
