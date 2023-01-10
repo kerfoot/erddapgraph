@@ -304,7 +304,15 @@ class TabledapPlotter(object):
 
     @property
     def constraints(self):
-        return self._constraints
+        return self._constraintsa
+
+    @property
+    def dataset_time_range(self):
+        if not self._dataset_id:
+            self._logger.warning('Please specify a dataset id (self.dataset_id)')
+            return
+
+        return self._datasets.loc[self._dataset_id, ['minTime', 'maxTime']]
 
     def set_background_color(self, color, opacity='ff'):
         """
@@ -417,13 +425,13 @@ class TabledapPlotter(object):
 
         self._plot_parameters.update({'.legend=': location})
 
-    def set_x_range(self, min_value=None, max_value=None, ascending=True, scale=None):
+    def set_x_range(self, min_value=None, max_value=None, ascending=True, scale='Linear'):
         """
         Set the x axis plotting parameters
-        :param min_value: minimum x value
-        :param max_value: maximum x value
-        :param ascending: ascending if True, descending if False
-        :param scale: Linear or Log
+        :param min_value: minimum x value [default=minimum x value]
+        :param max_value: maximum x value [default=maximum x value]
+        :param ascending: ascending if True, descending if False [default=True for ascending axis]
+        :param scale: Linear or Log [default='Linear']
         :return:
         """
 
@@ -660,6 +668,15 @@ class TabledapPlotter(object):
         if result.returncode != 0:
             self._logger.error('Failed to open image {:}: {:}'.format(self._last_image, result.stderr))
 
+    def search_datasets(self, target_string):
+        """
+        Search the data set IDS in self.datasets that contain target_string
+        :param target_string: string or regular expression to search for
+        :return: pandas data frame containing the data set metadata for all data set ids that contain target_string
+        """
+
+        return self._datasets[self._datasets.index.str.contains(target_string)]
+
     def _build_plot_query_string(self):
 
         self._plot_query = '&'.join(['{:}{:}'.format(k, quote(v)) for k, v in self._plot_parameters.items()])
@@ -676,7 +693,7 @@ class TabledapPlotter(object):
             return
 
         self._logger.info('Fetching data set variables....')
-        info_url = self._datasets.loc[self._dataset_id]['info']
+        info_url = '{:}.csv'.format(self._datasets.loc[self._dataset_id]['metadata'])
 
         info_df = pd.read_csv(info_url)
 
@@ -690,18 +707,11 @@ class TabledapPlotter(object):
         try:
 
             self._logger.info('Fetching available server datasets: {:}'.format(self._e.server))
-            url = self._e.get_search_url(response='csv', items_per_page=self._items_per_page)
+            url = self._e.get_download_url(dataset_id='allDatasets', response='csv')
             self._last_request = url
 
             self._logger.debug('Server info: {:}'.format(self._last_request))
-            self._datasets = pd.read_csv(url)
-
-            # rename columns more friendly
-            columns = {s: s.replace(' ', '_').lower() for s in self._datasets.columns}
-            self._datasets.rename(columns=columns, inplace=True)
-
-            # Use dataset_id as the index
-            self._datasets.set_index('dataset_id', inplace=True)
+            self._datasets = pd.read_csv(url, parse_dates=['minTime', 'maxTime'], skiprows=[1]).set_index('datasetID')
 
             # Remove useless columns for tabledap datasets
             self._datasets = self._datasets.drop(columns=['griddap', 'wms'])
