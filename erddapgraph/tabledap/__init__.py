@@ -51,6 +51,7 @@ class TabledapPlotter(object):
         self._last_request = None
         self._image_app = None
         self._last_image = None
+        self._image_path = os.path.realpath(os.path.curdir)
 
         # Option types that should be found in the self._plot_options_file
         option_types = ['image_types',
@@ -83,6 +84,102 @@ class TabledapPlotter(object):
 
         # Set the image display shell utility
         self.image_app = 'open'
+
+    @property
+    def image_path(self):
+        return self._image_path
+
+    @image_path.setter
+    def image_path(self, image_path):
+        image_path = os.path.realpath(image_path)
+        if os.path.isdir(image_path):
+            self._image_path = image_path
+
+        self._logger.error('Invalid image path: {:}'.format(image_path))
+
+    @property
+    def background_color(self):
+        graphics_command = '.bgColor='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def color_bar(self):
+        graphics_command = '.colorBar='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def marker_color(self):
+        graphics_command = '.color='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def line_style(self):
+        graphics_command = '.draw='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def legend(self):
+        graphics_command = '.legend='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def marker(self):
+        graphics_command = '.marker='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def x_range(self):
+        graphics_command = '.xRange='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def size(self):
+        graphics_command = '.size='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def trim(self):
+        graphics_command = '.trim='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+        self._logger.warning('{:} not set'.format(graphics_command))
+
+    @property
+    def y_range(self):
+        graphics_command = '.yRange='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
+
+    @property
+    def zoom(self):
+        graphics_command = '.zoom='
+        if graphics_command in self._plot_parameters:
+            return self._plot_parameters[graphics_command]
 
     @property
     def servers(self):
