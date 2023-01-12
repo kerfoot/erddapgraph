@@ -739,6 +739,8 @@ class TabledapPlotter(object):
 
         self._logger.info('Sending request: {:}'.format(self._image_url))
         r = requests.get(self._image_url, stream=True)
+        # Clear self._image_url
+        self._image_url = None
         if r.status_code != 200:
             self._logger.error('{:} (code={:}'.format(r.reason, r.status_code))
             return
