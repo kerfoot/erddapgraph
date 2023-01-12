@@ -94,6 +94,7 @@ class TabledapPlotter(object):
         image_path = os.path.realpath(image_path)
         if os.path.isdir(image_path):
             self._image_path = image_path
+            return
 
         self._logger.error('Invalid image path: {:}'.format(image_path))
 
@@ -257,8 +258,6 @@ class TabledapPlotter(object):
     @server.setter
     def server(self, erddap_url):
 
-        server_url = None
-
         # If erddap_url does not start with http, then assume it is a shortcut name of servers contained in
         # ERDDAP.server
         if not erddap_url.startswith('http'):
@@ -401,7 +400,7 @@ class TabledapPlotter(object):
 
     @property
     def constraints(self):
-        return self._constraintsa
+        return self._constraints
 
     @property
     def dataset_time_range(self):
@@ -582,7 +581,7 @@ class TabledapPlotter(object):
                                                                            str(ascending).lower(),
                                                                            scale)})
 
-    def set_zoom(self, zoom_level):
+    def set_zoom_level(self, zoom_level):
         """
         Set image zoom level
         :param zoom_level: zoom level, which must be contained in self.zoom_levels
@@ -706,25 +705,31 @@ class TabledapPlotter(object):
 
         return self._image_url
 
-    def download_image(self, image_path, clobber=False, show=False):
+    def download_image(self, image_name, clobber=False, show=False):
         """
-        Send a prepared ERDDAP image request and write the resulting file to image_path
-        :param image_path: Name of the file to write the image to
+        Send a prepared ERDDAP image request and write the resulting file to self._image_path as image_name
+        :param image_name: Name of the file to write the image to
         :param clobber: True to overwrite an existing image file
         :param show: True to try and display the downloaded image. self.image_app must be set to a valid system image
             display utility.
         :return: True on success, False on failure
         """
+
+        if not self._image_path:
+            self._logger.error('No image path set')
+            return
+
+        if not os.path.isdir(self._image_path):
+            self._logger.error('Invalid image path: {:}'.format(self._image_path))
+            return
+
         if not self._image_url:
             self._logger.error('No image request URL found.')
             self._logger.error('Build the image request URL with self.build_image_request() prior to downloading.')
             return
 
-        image_dir = os.path.dirname(image_path)
-        if not os.path.isdir(image_dir):
-            self._logger.error('Invalid image destination specified: {:}'.format(image_dir))
-            return
-
+        # Create the fully qualified path to the image to be written
+        image_path = os.path.join(self._image_path, image_name)
         if os.path.isfile(image_path):
             if clobber:
                 self._logger.warning('Clobbering existing image file: {:}'.format(image_path))
@@ -821,6 +826,7 @@ class TabledapPlotter(object):
             return
 
     def __repr__(self):
-        return '<TabledapPlotter(server={:}, image_type={:}, num_datasets={:})>'.format(self._e.server,
-                                                                                        self._e.response,
-                                                                                        self._num_datasets)
+        return '<TabledapPlotter(server={:}, image_type={:}, dataset_id={:}, num_datasets={:})>'.format(self._e.server,
+                                                                                                        self._e.response,
+                                                                                                        self._dataset_id,
+                                                                                                        self._num_datasets)
