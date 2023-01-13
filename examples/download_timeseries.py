@@ -1,4 +1,6 @@
 """
+2023-01-12: kerfoot@marine.rutgers.edu - init
+
 download_timeseries.py - download a time series of time (x) vs depth (y) with markers color coded by temperature
 Steps:
 1. Create the plotter instance and connect to the ERDDAP server
