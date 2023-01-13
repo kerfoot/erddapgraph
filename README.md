@@ -14,7 +14,7 @@ miniconda, the package can be installed by doing the following:
 
     > git clone https://github.com/kerfoot/erddapgraph.git
 
-Create the conda environment, using the provided environment.yml file by following [these instructions](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file).
+Create the conda environment, using the provided [environment.yml](https://github.com/kerfoot/erddapgraph/blob/main/environment.yml) file by following [these instructions](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file).
 
 Conda provides a [mechanism to add the repo path to PYTHONPATH](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#saving-environment-variables).  Setting things up this way will allow you to make changes to the source code and have them available when you run the code.
 
