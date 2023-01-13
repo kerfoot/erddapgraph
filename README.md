@@ -1,7 +1,6 @@
 # erddapgraph: Simplifying Make A Graph ERDDAP Tabledap API Requests and Downloads
 
-A python interface that greatly simplifies the process of creating and submitting ERDDAP tabledap Make A Graph API image
-requests and downloading the resulting images.
+A python interface that simplifies the creation of [ERDDAP tabledap Make A Graph API](https://coastwatch.pfeg.noaa.gov/erddap/tabledap/documentation.html#GraphicsCommands) image requests and downloading the resulting images.
 
 # Contents
 + [Installation](#installation)
