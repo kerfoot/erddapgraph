@@ -5,7 +5,7 @@ requests and downloading the resulting images.
 
 # Contents
 + [Installation](#installation)
-+ [Wiki](https://github.com/kerfoot/erddapgraph/wiki/erddapgraph-Home)
++ [Wiki](#wiki)
 + [Contact](#contact)
 
 ## Installation
@@ -19,7 +19,7 @@ Create the conda environment, using the provided environment.yml file by followi
 Conda provides a [mechanism to add the repo path to PYTHONPATH](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#saving-environment-variables).  Setting things up this way will allow you to make changes to the source code and have them available when you run the code.
 
 ## Wiki
-Documentation and examples are provided [in the wiki](https://github.com/kerfoot/erddapgraph/wiki/erddapgraph-Home).
+Documentation and examples are provided [in the wiki](https://github.com/kerfoot/erddapgraph/wiki)
 
 ## Contact
 
