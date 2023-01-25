@@ -796,7 +796,7 @@ class TabledapPlotter(object):
             self._logger.warning('No dataset_id specified.  Please specify a valid dataset_id via self.dataset_id')
             return
 
-        self._logger.info('Fetching data set variables....')
+        self._logger.debug('Fetching data set variables....')
         info_url = '{:}.csv'.format(self._datasets.loc[self._dataset_id]['metadata'])
 
         info_df = pd.read_csv(info_url)
