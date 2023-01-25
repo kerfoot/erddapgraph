@@ -4,7 +4,7 @@ A python interface that simplifies the creation of [ERDDAP tabledap Make A Graph
 
 # Contents
 + [Installation](#installation)
-+ [Wiki](#wiki)
++ [Wiki](https://github.com/kerfoot/erddapgraph/wiki)
 + [Contact](#contact)
 
 ## Installation
