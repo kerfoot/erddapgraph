@@ -58,7 +58,7 @@ class TabledapPlotter(object):
                         'legend_options',
                         'line_styles',
                         'marker_types',
-                        'color',
+                        'colors',
                         'opacities',
                         'continuous_options',
                         'scale_options',
@@ -623,7 +623,7 @@ class TabledapPlotter(object):
             return
 
         constraint = '{:}{:}{:}'.format(variable, operator, value)
-        self._logger.info('Adding constrain: {:}'.format(constraint))
+        self._logger.info('Adding constraint: {:}'.format(constraint))
 
         self._constraints['{:}{:}'.format(variable, operator)] = str(value)
 
