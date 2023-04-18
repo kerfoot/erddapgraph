@@ -12,6 +12,7 @@ import os
 import yaml
 from urllib.parse import quote
 import subprocess
+from erddapgraph import plot_options
 
 
 class TabledapPlotter(object):
@@ -67,18 +68,14 @@ class TabledapPlotter(object):
                         'operators']
 
         # Find and load the ERDDAP MakeAGraph plotting options
-        self._plot_options_file = os.path.realpath(os.path.join(os.path.dirname(
-            __file__),
-            '../../config/tabledap-options.yml'))
-        with open(self._plot_options_file) as fid:
-            self._plot_options = yaml.safe_load(fid)
+        self._plot_options = plot_options
 
         # Check to make sure that all option_types are found in self._plot_options_file
         for option_type in option_types:
             if option_type not in self._plot_options:
                 self._logger.warning(
-                    'Option type {:} not found in plot options configuration file: {:}'.format(option_type,
-                                                                                               self._plot_options_file))
+                    'Option {:} not found in plot options configuration file: {:}'.format(option_type,
+                                                                                          plot_options['options_file']))
 
         self._fetch_datasets()
 
@@ -737,7 +734,7 @@ class TabledapPlotter(object):
                 self._logger.warning('Skipping existing image file: {:}'.format(image_path))
                 return
 
-        self._logger.info('Sending request: {:}'.format(self._image_url))
+        self._logger.debug('Sending request: {:}'.format(self._image_url))
         r = requests.get(self._image_url, stream=True)
         # Clear self._image_url
         self._image_url = None
@@ -745,14 +742,20 @@ class TabledapPlotter(object):
             self._logger.error('{:} (code={:}'.format(r.reason, r.status_code))
             return
         self._logger.info('Writing image to {:}'.format(image_path))
-        with open(image_path, 'wb') as f:
-            for chunk in r.iter_content():
-                f.write(chunk)
+        try:
+            with open(image_path, 'wb') as f:
+                for chunk in r.iter_content():
+                    f.write(chunk)
 
-            self._last_image = os.path.realpath(image_path)
+                self._last_image = os.path.realpath(image_path)
 
-            if show:
-                self.show()
+                if show:
+                    self.show()
+
+                return self._last_image
+
+        except (OSError, IOError) as e:
+            logging.error('Image download error: {:}'.format(e))
 
     def show(self):
         """
