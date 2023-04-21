@@ -31,6 +31,7 @@ class TabledapPlotter(object):
         self._e = ERDDAP(erddap_url, protocol=self._protocol, response='png')
         self._servers = servers
         self._datasets = pd.DataFrame()
+        self._dataset_description = pd.DataFrame()
 
         self._default_plot_parameters = {'.bgColor=': '0xFFFFFFFF',
                                          '.color=': '0x000000',
@@ -42,7 +43,6 @@ class TabledapPlotter(object):
                                          '.yRange=': '||false|Linear'}
 
         self._dataset_id = None
-        self._dataset_variables = []
         self._constraints = {}
         self._plot_parameters = self._default_plot_parameters.copy()
         self._plot_query = None
@@ -69,6 +69,7 @@ class TabledapPlotter(object):
 
         # Find and load the ERDDAP MakeAGraph plotting options
         self._plot_options = plot_options
+        self._plot_options_file = plot_options['options_file']
 
         # Check to make sure that all option_types are found in self._plot_options_file
         for option_type in option_types:
@@ -226,11 +227,22 @@ class TabledapPlotter(object):
         self._logger.info('Selected dataset_id: {:}'.format(dataset_id))
         self._dataset_id = dataset_id
 
-        self._get_dataset_variables()
+        # Fetch the data set metadata/description
+        self.get_dataset_description()
+
+    #        self._get_dataset_variables()
 
     @property
     def dataset_variables(self):
-        return self._dataset_variables
+        #        return self._dataset_variables
+
+        return sorted(
+            self._dataset_description[self._dataset_description['row_type'] == 'variable']['variable_name'].tolist())
+
+    @property
+    def dataset_description(self):
+
+        return self._dataset_description
 
     @property
     def plotting_query(self):
@@ -274,10 +286,8 @@ class TabledapPlotter(object):
         self.reset_plot_parameters()
         self._logger.info(self)
 
-        self._dataset_variables = []
         self._last_request = None
         self._dataset_id = None
-        self._dataset_variables = []
         self._plot_query = None
         self._constraints_query = None
         self._image_url = None
@@ -610,7 +620,7 @@ class TabledapPlotter(object):
                                  'before adding constraints')
             return
 
-        if variable not in self._dataset_variables:
+        if variable not in self.dataset_variables:
             self._logger.error('X variable {:} not found in data set: {:}'.format(variable, self._dataset_id))
             return
 
@@ -664,16 +674,16 @@ class TabledapPlotter(object):
             self._logger.warning('No dataset_id specified.  Please specify a valid dataset_id via self.dataset_id')
             return
 
-        if x not in self._dataset_variables:
+        if x not in self.dataset_variables:
             self._logger.error('X variable {:} not found in data set: {:}'.format(x, self._dataset_id))
             return
-        if y not in self._dataset_variables:
+        if y not in self.dataset_variables:
             self._logger.error('Y variable {:} not found in data set: {:}'.format(y, self._dataset_id))
             return
 
         variables = [x, y]
         if c:
-            if c not in self._dataset_variables:
+            if c not in self.dataset_variables:
                 self._logger.error('C variable {:} not found in data set: {:}'.format(c, self._dataset_id))
                 return
             variables.append(c)
@@ -784,6 +794,45 @@ class TabledapPlotter(object):
 
         return self._datasets[self._datasets.index.str.contains(target_string)]
 
+    def get_dataset_description(self):
+        """
+        Fetch the data set metadata description (datasetID/info.csv) as a pandas DataFrame
+        :return: pandas DataFrame
+        """
+
+        self._dataset_description = pd.DataFrame()
+
+        if not self._dataset_id:
+            self._logger.warning('No dataset_id specified')
+
+        # Get the data set description csv response url
+        desc_url = self._e.get_info_url(self._dataset_id, response='csv')
+
+        self._logger.info('Fetching dataset {:} description'.format(self._dataset_id))
+
+        metadata = pd.read_csv(desc_url)
+        # Rename the columns to all lower case and replace spaces with underscores
+        metadata.rename(columns={s: s.replace(' ', '_').lower() for s in metadata.columns.to_list()}, inplace=True)
+
+        self._dataset_description = metadata
+
+    def get_variable_attributes(self, variable):
+        """
+        Fetch the attributes of a variable as a pandas DataFrame
+        :param variable: data set variable name
+        :return: pandas DataFrame
+        """
+        if not self._dataset_id:
+            self._logger.warning('No dataset_id specified')
+            return pd.DataFrame()
+
+        if variable not in self.dataset_variables:
+            self._logger.warning('Variable {:} not found in dataset {:}'.format(variable, self._dataset_id))
+            return pd.DataFrame()
+
+        return self._dataset_description[(self._dataset_description['variable_name'] == variable) & (
+                self._dataset_description['row_type'] == 'attribute')]
+
     def _build_plot_query_string(self):
 
         self._plot_query = '&'.join(['{:}{:}'.format(k, quote(v)) for k, v in self._plot_parameters.items()])
@@ -791,23 +840,6 @@ class TabledapPlotter(object):
     def _build_constraints_query_string(self):
 
         self._constraints_query = '&'.join([quote('{:}{:}'.format(k, v)) for k, v in self._constraints.items()])
-
-    def _get_dataset_variables(self):
-
-        self._dataset_variables = []
-        if not self._dataset_id:
-            self._logger.warning('No dataset_id specified.  Please specify a valid dataset_id via self.dataset_id')
-            return
-
-        self._logger.debug('Fetching data set variables....')
-        info_url = '{:}.csv'.format(self._datasets.loc[self._dataset_id]['metadata'])
-
-        info_df = pd.read_csv(info_url)
-
-        self._dataset_variables = sorted(info_df[info_df['Row Type'] == 'variable']['Variable Name'].tolist())
-
-        self._logger.info(
-            'Found {:} variables for dataset_id: {:}'.format(len(self._dataset_variables), self._dataset_id))
 
     def _fetch_datasets(self):
 
