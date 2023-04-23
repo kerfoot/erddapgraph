@@ -28,6 +28,9 @@ marker_types:
     - Filled Circle
     - Up Triangle
     - Filled Up Triangle
+    - Borderless Filled Square
+    - Borderless Filled Circle
+    - Borderless Filled Up Triangle
 colors:
     white: 'FFFFFF'
     light grey: 'CCCCCC'
