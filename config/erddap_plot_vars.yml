@@ -1,0 +1,81 @@
+backscatter_coefficient:
+  min: 0
+  colorbar: KT_turbid
+beam_c:
+  min: 0
+  colorbar: KT_turbid
+beta_470nm:
+  min: 0
+  colorbar: KT_turbid
+beta_532nm:
+  min: 0
+  colorbar: KT_turbid
+beta_532nm_signal:
+  min: 0
+  colorbar: KT_turbid
+beta_660nm:
+  min: 0
+  colorbar: KT_turbid
+beta700:
+  min: 0
+  colorbar: KT_turbid
+beta_700nm:
+  min: 0
+  colorbar: KT_turbid
+beta_880nm:
+  min: 0
+  colorbar: KT_turbid
+cdom:
+  min: 0
+  colorbar: KT_turbid
+chlorophyll_a:
+  min: 0
+  colorbar: KT_algae
+conductivity:
+  colorbar: KT_haline
+conductivity2:
+  colorbar: KT_haline
+density:
+  colorbar: KT_dense
+density2:
+  colorbar: KT_dense
+downwelling_par_irradiance:
+  colorbar: KT_solar
+nitrate_concentration:
+  colorbar: KT_tempo
+  min: 0
+oxygen_concentration:
+  colorbar: KT_oxy
+oxygen_saturation:
+  colorbar: KT_oxy
+potential_temperature:
+  colorbar: KT_thermal
+potential_temperature2:
+  colorbar: KT_thermal
+salinity:
+  colorbar: KT_haline
+salinity2:
+  colorbar: KT_haline
+sound_speed:
+  colorbar: KT_speed
+sound_speed2:
+  colorbar: KT_speed
+temperature:
+  colorbar: KT_thermal
+temperature2:
+  colorbar: KT_thermal
+sci_lisst_meansize:
+  min: 0
+  colorbar: KT_turbid
+sci_lisst_totvol:
+  min: 0
+  colorbar: KT_turbid
+sci_fl3slo_phyco_units:
+  min: 0
+  colorbar: KT_algae
+sci_fl3slo_chlor_units:
+  min: 0
+  colorbar: KT_algae
+sci_fl3slo_cdom_units:
+  min: 0
+  colorbar: KT_algae
