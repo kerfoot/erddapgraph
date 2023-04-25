@@ -59,6 +59,7 @@ def main(args):
     # Load the deployment specific plot parameters if specified in config_file
     plot_configs = None
     if config_file:
+        logging.info('Loading deployment plot configuration: {:}'.format(config_file))
         if not os.path.isfile(config_file):
             logging.error('Plotting configuration file does not exist: {:}'.format(config_file))
             return 1
@@ -158,6 +159,8 @@ def main(args):
             logging.debug('Variable {:} not found in ERDDAP data set: {:}'.format(plot_var, dataset_id))
             continue
 
+        logging.info('Plotting {:}'.format(plot_var))
+
         # Fill in and add plot_variables[plot_var]['min'] and plot_variables[plot_var]['max'] from the variable's
         # 'actual_range' attribute if not specified in either the plotting_defaults_file or config_file
         if 'min' not in plot_variables[plot_var]:
@@ -173,6 +176,7 @@ def main(args):
                                                                                                        plot_var,
                                                                                                        min_value))
                     plot_variables[plot_var]['min'] = min_value
+
         if 'max' not in plot_variables[plot_var]:
             logging.info('No maximum value set for {:}'.format(plot_var))
             var_atts = plotter.get_variable_attributes(plot_var)
@@ -200,12 +204,13 @@ def main(args):
             logging.info('Setting {:} maximum colorbar value: {:}'.format(plot_var, plot_variables[plot_var]['max']))
             cmax = plot_variables[plot_var]['max']
 
+        # Set the depth variable constraints if specified
         if 'zmin' in plot_variables[plot_var]:
-            logging.info('Setting {:} minimum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['zmin']))
-            plotter.add_constraint(plot_var, '>=', plot_variables[plot_var]['min'])
+            logging.info('Setting {:} minimum value constraint: {:}'.format(y_variable, plot_variables[plot_var]['zmin']))
+            plotter.add_constraint(y_variable, '>=', plot_variables[plot_var]['zmin'])
         if 'zmax' in plot_variables[plot_var]:
-            logging.info('Setting {:} maximum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['zmax']))
-            plotter.add_constraint(plot_var, '<=', plot_variables[plot_var]['max'])
+            logging.info('Setting {:} maximum value constraint: {:}'.format(y_variable, plot_variables[plot_var]['zmax']))
+            plotter.add_constraint(y_variable, '<=', plot_variables[plot_var]['zmax'])
 
         # Set the x-axis direction
         plotter.set_x_range(ascending=x_ascending)
@@ -221,11 +226,7 @@ def main(args):
         plotter.add_constraint(plot_var, '!=', 'NaN')
 
         logging.info('Creating url...')
-        it0 = datetime.datetime.now()
         plotter.build_image_request(x_variable, y_variable, plot_var)
-        it1 = datetime.datetime.now()
-        i_delta = it1 - it0
-        logging.info('{:} profiles image downloaded in {:0.1f} seconds'.format(plot_var, i_delta.total_seconds()))
         # Print the url but do not send the request
         if debug:
             logging.info('URL: {:}'.format(plotter.image_url))
@@ -234,7 +235,11 @@ def main(args):
 
         # Download the image
         image_name = '{:}_{:}_ts_{:}.png'.format(dataset_id, plot_var, image_type)
+        it0 = datetime.datetime.now()
         image_path = plotter.download_image(image_name, clobber=clobber)
+        it1 = datetime.datetime.now()
+        i_delta = it1 - it0
+        logging.info('{:} profiles image downloaded in {:0.1f} seconds'.format(plot_var, i_delta.total_seconds()))
         if image_path:
             logging.info('Image written: {:}'.format(image_path))
 
@@ -347,7 +352,7 @@ if __name__ == '__main__':
 
     parsed_args = arg_parser.parse_args()
 
-    #    print(parsed_args)
-    #    sys.exit(0)
+#    print(parsed_args)
+#    sys.exit(0)
 
     sys.exit(main(parsed_args))
