@@ -70,6 +70,9 @@ oxygen_concentration_shifted:
 oxygen_saturation:
   zmin: 0
   colorbar: KT_oxy
+oxygen_saturation_shifted:
+  zmin: 0
+  colorbar: KT_oxy
 potential_temperature:
   zmin: 0
   colorbar: KT_thermal
