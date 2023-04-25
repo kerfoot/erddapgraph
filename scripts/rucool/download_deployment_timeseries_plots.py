@@ -231,7 +231,7 @@ def main(args):
             continue
 
         # Download the image
-        image_name = '{:}_{:}_profiles_{:}.png'.format(dataset_id, plot_var, image_type)
+        image_name = '{:}_{:}_ts_{:}.png'.format(dataset_id, plot_var, image_type)
         image_path = plotter.download_image(image_name, clobber=clobber)
         if image_path:
             logging.info('Image written: {:}'.format(image_path))
