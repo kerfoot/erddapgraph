@@ -472,10 +472,10 @@ class TabledapPlotter(object):
             self._logger.warning('Defaulting to Linear')
             scale = 'Linear'
 
-        if not min_value:
+        if min_value is None:
             min_value = ''
 
-        if not max_value:
+        if max_value is None:
             max_value = ''
 
         if not num_sections:
