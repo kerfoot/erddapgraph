@@ -190,12 +190,14 @@ def main(args):
         cmin = None
         cmax = None
         if 'min' in plot_variables[plot_var]:
-            logging.info('Setting {:} minimum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['min']))
-            plotter.add_constraint(plot_var, '>=', plot_variables[plot_var]['min'])
+#            logging.info('Setting {:} minimum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['min']))
+#            plotter.add_constraint(plot_var, '>=', plot_variables[plot_var]['min'])
+            logging.info('Setting {:} minimum colorbar value: {:}'.format(plot_var, plot_variables[plot_var]['min']))
             cmin = plot_variables[plot_var]['min']
         if 'max' in plot_variables[plot_var]:
-            logging.info('Setting {:} maximum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['max']))
-            plotter.add_constraint(plot_var, '<=', plot_variables[plot_var]['max'])
+#            logging.info('Setting {:} maximum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['max']))
+#            plotter.add_constraint(plot_var, '<=', plot_variables[plot_var]['max'])
+            logging.info('Setting {:} maximum colorbar value: {:}'.format(plot_var, plot_variables[plot_var]['max']))
             cmax = plot_variables[plot_var]['max']
 
         if 'zmin' in plot_variables[plot_var]:
