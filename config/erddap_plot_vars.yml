@@ -46,6 +46,8 @@ nitrate_concentration:
   min: 0
 oxygen_concentration:
   colorbar: KT_oxy
+oxygen_concentration_shifted:
+  colorbar: KT_oxy
 oxygen_saturation:
   colorbar: KT_oxy
 potential_temperature:
