@@ -9,6 +9,7 @@ import pandas as pd
 import requests
 import logging
 import os
+import re
 import yaml
 from urllib.parse import quote
 import subprocess
@@ -33,7 +34,7 @@ class TabledapPlotter(object):
         self._datasets = pd.DataFrame()
         self._dataset_description = pd.DataFrame()
 
-        self._default_plot_parameters = {'.bgColor=': '0xFFFFFFFF',
+        self._default_plot_parameters = {'.bgColor=': '0xFFCCCCFF',
                                          '.color=': '0x000000',
                                          '.colorBar=': 'Rainbow2|C|Linear|||',
                                          '.draw=': 'markers',
@@ -82,6 +83,9 @@ class TabledapPlotter(object):
 
         # Set the image display shell utility
         self.image_app = 'open'
+
+        # Regex to match RRGGBB colors
+        self._hex_regex = re.compile(r'^[a-z0-9]{6}$', re.IGNORECASE)
 
     @property
     def image_path(self):
@@ -424,16 +428,22 @@ class TabledapPlotter(object):
         :param opacity: hexadecimal representation (00-FF) for the opacity. 00 is clear, FF is fully opaque
         :return:
         """
-        if color not in self.colors:
-            self._logger.error('Invalid color specified: {:}'.format(color))
-            return
 
-        opacity = opacity.upper()
+        if color in self.colors:
+            rrggbb = self._plot_options['colors'][color]
+        else:
+            match = self._hex_regex.fullmatch(color)
+            if not match:
+                self._logger.error('Invalid color specified: {:}'.format(color))
+                return
+            rrggbb = color
+
+        aa = opacity.upper()
         if opacity not in self.opacities:
             self._logger.error('Invalid opacity specified: {:}'.format(opacity))
             return
 
-        self._plot_parameters.update({'.bgColor=': '0x{:}{:}'.format(opacity, self._plot_options['colors'][color])})
+        self._plot_parameters.update({'.bgColor=': '0x{:}{:}'.format(aa, rrggbb)})
 
     def set_color_bar(self, color_bar, continuous='C', scale='Linear', min_value=None, max_value=None,
                       num_sections=None):
