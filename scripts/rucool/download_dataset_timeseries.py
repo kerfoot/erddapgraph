@@ -115,7 +115,7 @@ def main(args):
             try:
                 dt0 = parser.parse(start_time)
                 ts0 = dt0.strftime('%Y%m%dT%H%M%S')
-                logging.info('Adding time constraint: >={:}'.format(ts0))
+#                logging.info('Adding time constraint: >={:}'.format(ts0))
             #                plotter.add_constraint('time', '>=', ts0)
             except ValueError as e:
                 logging.error('Error parsing start_time {:}: {:}'.format(start_time, e))
@@ -124,7 +124,7 @@ def main(args):
             try:
                 dt1 = parser.parse(end_time)
                 ts1 = dt1.strftime('%Y%m%dT%H%M%S')
-                logging.info('Adding time constraint: <={:}'.format(ts1))
+#                logging.info('Adding time constraint: <={:}'.format(ts1))
             #                plotter.add_constraint('time', '>=', ts1)
             except ValueError as e:
                 logging.error('Error parsing start_time {:}: {:}'.format(end_time, e))
@@ -159,7 +159,7 @@ def main(args):
             logging.debug('Variable {:} not found in ERDDAP data set: {:}'.format(plot_var, dataset_id))
             continue
 
-        logging.info('Plotting {:}'.format(plot_var))
+        logging.info('Plotting {:} time series'.format(plot_var))
 
         # Fill in and add plot_variables[plot_var]['min'] and plot_variables[plot_var]['max'] from the variable's
         # 'actual_range' attribute if not specified in either the plotting_defaults_file or config_file
