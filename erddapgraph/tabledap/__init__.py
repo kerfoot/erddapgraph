@@ -558,9 +558,9 @@ class TabledapPlotter(object):
             self._logger.error('Value for ascending must be a boolean')
             return
 
-        if not min_value:
+        if min_value is None:
             min_value = ''
-        if not max_value:
+        if max_value is None:
             max_value = ''
 
         self._plot_parameters.update({'.xRange=': '{:}|{:}|{:}|{:}'.format(min_value,
@@ -568,7 +568,7 @@ class TabledapPlotter(object):
                                                                            str(ascending).lower(),
                                                                            scale)})
 
-    def set_y_range(self, min_value='', max_value='', ascending=False, scale=None):
+    def set_y_range(self, min_value=None, max_value=None, ascending=False, scale=None):
         """
         Set the y axis plotting parameters
         :param min_value: minimum x value
@@ -588,9 +588,9 @@ class TabledapPlotter(object):
             self._logger.error('Value for ascending must be a boolean')
             return
 
-        if not min_value:
+        if min_value is None:
             min_value = ''
-        if not max_value:
+        if max_value is None:
             max_value = ''
 
         self._plot_parameters.update({'.yRange=': '{:}|{:}|{:}|{:}'.format(min_value,
