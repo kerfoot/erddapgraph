@@ -76,7 +76,7 @@ def main(args):
         for plot_variable in plot_configs.keys():
             if plot_variable not in plot_variables:
                 logging.info('Creating new plot variable: {:}'.format(plot_variable))
-                plot_variables[plot_variable] = plot_variable[plot_variable]
+                plot_variables[plot_variable] = plot_configs[plot_variable]
             else:
                 logging.info('Updating existing plot variable parameters: {:}'.format(plot_variable))
                 plot_variables[plot_variable].update(plot_configs[plot_variable])
