@@ -143,6 +143,12 @@ def main(args):
 
     for plot_var in plot_variables:
 
+        if plot_var not in plotter.dataset_variables:
+            logging.debug('Variable {:} not found in ERDDAP data set: {:}'.format(plot_var, dataset_id))
+            continue
+
+        logging.info('Plotting {:} time series'.format(plot_var))
+
         # Clear previous constraints
         plotter.clear_constraints()
 
@@ -154,12 +160,6 @@ def main(args):
                 plotter.add_constraint('time', '>=', ts0)
             if ts1:
                 plotter.add_constraint('time', '<=', ts1)
-
-        if plot_var not in plotter.dataset_variables:
-            logging.debug('Variable {:} not found in ERDDAP data set: {:}'.format(plot_var, dataset_id))
-            continue
-
-        logging.info('Plotting {:} time series'.format(plot_var))
 
         # Fill in and add plot_variables[plot_var]['min'] and plot_variables[plot_var]['max'] from the variable's
         # 'actual_range' attribute if not specified in either the plotting_defaults_file or config_file
