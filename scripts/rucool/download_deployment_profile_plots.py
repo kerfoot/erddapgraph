@@ -23,12 +23,8 @@ def main(args):
     plotting_defaults_file = args.defaults
     dataset_id = args.dataset_id
     x_ascending = True
-#    if args.xdir == 'desc':
-#        x_ascending = False
     y_variable = args.yvar
-    y_ascending = True
-#    if args.ydir == 'desc':
-#        y_ascending = False
+    y_ascending = False
     color_variable = args.color
     cmin = args.cmin
     cmax = args.cmax
@@ -43,6 +39,7 @@ def main(args):
     marker_color = args.markercolor
     line_style = args.graphtype
     color_bar = args.colorbar
+    background_color = args.background_color
     erddap_url = args.url
     debug = args.debug
     clobber = args.clobber
@@ -104,12 +101,15 @@ def main(args):
     if y_variable not in plotter.dataset_variables:
         logging.error('Y-axis variable {:} not found in the dataset'.format(y_variable))
         return 1
-
+    logging.info('Y-Axis variable is {:}'.format(y_variable))
     if color_variable and color_variable not in plotter.dataset_variables:
         logging.error('Color variable {:} not found in the dataset'.format(color_variable))
         return 1
+    #    logging.info('Color variable is {:}'.format(color_variable))
 
     # Handle time constraints
+    ts0 = None
+    ts1 = None
     if hours:
         logging.info('Plotting profiles less than {:} hours from the max time'.format(hours))
         plotter.add_constraint('time', '>=', 'max(time)-{:}hours'.format(hours))
@@ -150,40 +150,48 @@ def main(args):
             logging.debug('Variable {:} not found in ERDDAP data set: {:}'.format(plot_var, dataset_id))
             continue
 
+        logging.info('Plotting {:} profiles'.format(plot_var))
+
+        # Set the x and y minimum values
+        x_min = None
         if 'min' in plot_variables[plot_var]:
-            logging.info('Setting {:} minimum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['min']))
-            plotter.add_constraint(plot_var, '>=', plot_variables[plot_var]['min'])
+            x_min = plot_variables[plot_var]['min']
+        if x_min is not None:
+            logging.info('Setting {:} minimum value: {:}'.format(plot_var, x_min))
+
+        x_max = None
         if 'max' in plot_variables[plot_var]:
-            logging.info('Setting {:} maximum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['max']))
-            plotter.add_constraint(plot_var, '<=', plot_variables[plot_var]['max'])
+            x_max = plot_variables[plot_var]['max']
+        if x_max is not None:
+            logging.info('Setting {:} maximum value: {:}'.format(plot_var, x_max))
 
+        y_min = None
         if 'zmin' in plot_variables[plot_var]:
-            logging.info('Setting {:} minimum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['zmin']))
-            plotter.add_constraint(plot_var, '>=', plot_variables[plot_var]['min'])
+            y_min = plot_variables[plot_var]['zmin']
+        if y_min is not None:
+            logging.info('Setting {:} depth minimum value: {:}'.format(plot_var, y_min))
+
+        y_max = None
         if 'zmax' in plot_variables[plot_var]:
-            logging.info('Setting {:} maximum value constraint: {:}'.format(plot_var, plot_variables[plot_var]['zmax']))
-            plotter.add_constraint(plot_var, '<=', plot_variables[plot_var]['max'])
+            y_max = plot_variables[plot_var]['zmax']
+        if y_max is not None:
+            logging.info('Setting {:} depth maximum value: {:}'.format(plot_var, y_max))
 
-        # Set the x-axis to descending
-        #        plotter.set_x_range(min_value=xmin, max_value=xmax, ascending=x_ascending)
-        plotter.set_x_range(ascending=x_ascending)
+        # Set the x-axis
+        plotter.set_x_range(min_value=x_min, max_value=y_max, ascending=x_ascending)
 
-        # Set the y-axis to descending
-        #        plotter.set_y_range(min_value=ymin, max_value=ymax, ascending=y_ascending)
-        plotter.set_y_range(ascending=y_ascending)
+        # Set the y-axis
+        plotter.set_y_range(min_value=y_min, max_value=y_max, ascending=y_ascending)
 
-        # Set the color bar with color bar name, min and max values
-        plotter.set_color_bar(color_bar, min_value=cmin, max_value=cmax)
+        # Set the color bar
+        if color_bar:
+            plotter.set_color_bar(color_bar, min_value=cmin, max_value=cmax)
 
         # Add constraint to NOT plot NaN values
         plotter.add_constraint(plot_var, '!=', 'NaN')
 
         logging.info('Creating url...')
-        it0 = datetime.datetime.now()
         plotter.build_image_request(plot_var, y_variable, color_variable)
-        it1 = datetime.datetime.now()
-        i_delta = it1 - it0
-        logging.info('{:} profiles image downloaded in {:0.1f} seconds'.format(plot_var, i_delta.total_seconds()))
         # Print the url but do not send the request
         if debug:
             logging.info('URL: {:}'.format(plotter.image_url))
@@ -192,7 +200,11 @@ def main(args):
 
         # Download the image
         image_name = '{:}_{:}_profiles_{:}.png'.format(dataset_id, plot_var, image_type)
+        it0 = datetime.datetime.now()
         image_path = plotter.download_image(image_name, clobber=clobber)
+        it1 = datetime.datetime.now()
+        i_delta = it1 - it0
+        logging.info('{:} profiles image downloaded in {:0.1f} seconds'.format(plot_var, i_delta.total_seconds()))
         if image_path:
             logging.info('Image written: {:}'.format(image_path))
 
@@ -255,7 +267,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('-s', '--markersize',
                             type=int,
                             help='Marker size',
-                            default=5)
+                            default=7)
 
     arg_parser.add_argument('-m', '--markercolor',
                             type=str,
@@ -281,15 +293,9 @@ if __name__ == '__main__':
                             choices=plot_options['color_bars'],
                             default='Rainbow2')
 
-#    arg_parser.add_argument('--xdir',
-#                            help='Set x-axis direction',
-#                            choices=['asc', 'desc'],
-#                            default='asc')
-#
-#    arg_parser.add_argument('--ydir',
-#                            help='Set ascending y-axis',
-#                            choices=['asc', 'desc'],
-#                            default='desc')
+    arg_parser.add_argument('-b', '--background_color',
+                            help='Change background color from default',
+                            type=str)
 
     arg_parser.add_argument('-u', '--url',
                             help='ERDDAP server base url',
