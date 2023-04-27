@@ -430,20 +430,22 @@ class TabledapPlotter(object):
         """
 
         if color in self.colors:
+            # Check to see if a named color in tabledap-options.yml
             rrggbb = self._plot_options['colors'][color]
         else:
+            # If not a named color, check to see if valid hexadecimal
             match = self._hex_regex.fullmatch(color)
             if not match:
                 self._logger.error('Invalid color specified: {:}'.format(color))
                 return
             rrggbb = color
 
-        aa = opacity.upper()
+        opacity = opacity.upper()
         if opacity not in self.opacities:
             self._logger.error('Invalid opacity specified: {:}'.format(opacity))
             return
 
-        self._plot_parameters.update({'.bgColor=': '0x{:}{:}'.format(aa, rrggbb)})
+        self._plot_parameters.update({'.bgColor=': '0x{:}{:}'.format(opacity.upper(), rrggbb.upper())})
 
     def set_color_bar(self, color_bar, continuous='C', scale='Linear', min_value=None, max_value=None,
                       num_sections=None):
