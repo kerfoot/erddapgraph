@@ -626,6 +626,13 @@ class TabledapPlotter(object):
         self._plot_parameters.update({'.trim=': str(num_pixels)})
 
     def add_constraint(self, variable, operator, value):
+        """
+        Add constraint to the image request url.
+        :param variable: variable to constrain
+        :param operator: valid operator from self._plot_options['operators']
+        :param value: constrain value
+        :return:
+        """
 
         if not self._dataset_id:
             self._logger.warning('No dataset_id specified.  Please specify a valid dataset_id via self.dataset_id '
