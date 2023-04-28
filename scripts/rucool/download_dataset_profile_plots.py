@@ -152,6 +152,16 @@ def main(args):
 
         logging.info('Plotting {:} profiles'.format(plot_var))
 
+        plotter.clear_constraints()
+
+        if hours:
+            plotter.add_constraint('time', '>=', 'max(time)-{:}hours'.format(hours))
+        else:
+            if ts0:
+                plotter.add_constraint('time', '>=', ts0)
+            if ts1:
+                plotter.add_constraint('time', '<=', ts1)
+
         # Set the x and y minimum values
         x_min = None
         if 'min' in plot_variables[plot_var]:
@@ -177,8 +187,14 @@ def main(args):
         if y_max is not None:
             logging.info('Setting {:} depth maximum value: {:}'.format(plot_var, y_max))
 
+        # If plot_variables[plot_var]['_FillValue'] exists, set a constraint to prevent plotting _FillValues when not
+        # defined in the data set
+        if '_FillValue' in plot_variables[plot_var]:
+            logging.info('Setting _FillValue constraint: {:}'.format(plot_variables[plot_var]['_FillValue']))
+            plotter.add_constraint(plot_var, '!=', plot_variables[plot_var]['_FillValue'])
+
         # Set the x-axis
-        plotter.set_x_range(min_value=x_min, max_value=y_max, ascending=x_ascending)
+        plotter.set_x_range(min_value=x_min, max_value=x_max, ascending=x_ascending)
 
         # Set the y-axis
         plotter.set_y_range(min_value=y_min, max_value=y_max, ascending=y_ascending)
