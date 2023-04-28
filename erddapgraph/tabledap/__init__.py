@@ -44,7 +44,7 @@ class TabledapPlotter(object):
                                          '.yRange=': '||false|Linear'}
 
         self._dataset_id = None
-        self._constraints = {}
+        self._constraints = []
         self._plot_parameters = self._default_plot_parameters.copy()
         self._plot_query = None
         self._constraints_query = None
@@ -644,24 +644,29 @@ class TabledapPlotter(object):
         constraint = '{:}{:}{:}'.format(variable, operator, value)
         self._logger.info('Adding constraint: {:}'.format(constraint))
 
-        self._constraints['{:}{:}'.format(variable, operator)] = str(value)
+        # Create and add a constraint dictionary to _constraints
+        self._constraints.append({'var': variable,
+                                  'op': operator,
+                                  'val': value})
 
-    def remove_constraint(self, constraint):
+    #        self._constraints['{:}{:}'.format(variable, operator)] = str(value)
 
-        if constraint not in self._constraints:
-            self._logger.warning('Constraint {:} has not been set'.format(constraint))
-            return
-
-        self._logger.info('Removing constraint: {:}'.format(constraint))
-        constraint_value = self._constraints.pop(constraint)
-        self._logger.info('Constraint {:}={:} removed'.format(constraint, constraint_value))
+#    def remove_constraint(self, constraint):
+#
+#        if constraint not in self._constraints:
+#            self._logger.warning('Constraint {:} has not been set'.format(constraint))
+#            return
+#
+#        self._logger.info('Removing constraint: {:}'.format(constraint))
+#        constraint_value = self._constraints.pop(constraint)
+#        self._logger.info('Constraint {:}={:} removed'.format(constraint, constraint_value))
 
     def clear_constraints(self):
         """
         Clears the current plot constraints
         :return:
         """
-        self._constraints = {}
+        self._constraints = []
 
     def reset_plot_parameters(self):
         """
@@ -851,7 +856,9 @@ class TabledapPlotter(object):
 
     def _build_constraints_query_string(self):
 
-        self._constraints_query = '&'.join([quote('{:}{:}'.format(k, v)) for k, v in self._constraints.items()])
+        self._constraints_query = '&'.join(
+            [quote('{:}{:}{:}'.format(constraint['var'], constraint['op'], constraint['val'])) for constraint in
+             self._constraints])
 
     def _fetch_datasets(self):
 
