@@ -212,6 +212,12 @@ def main(args):
             logging.info('Setting {:} maximum value constraint: {:}'.format(y_variable, plot_variables[plot_var]['zmax']))
             plotter.add_constraint(y_variable, '<=', plot_variables[plot_var]['zmax'])
 
+        # If plot_variables[plot_var]['_FillValue'] exists, set a constraint to prevent plotting _FillValues when not
+        # defined in the data set
+        if '_FillValue' in plot_variables[plot_var]:
+            logging.info('Setting _FillValue constraint: {:}'.format(plot_variables[plot_var]['_FillValue']))
+            plotter.add_constraint(plot_var, '!=', plot_variables[plot_var]['_FillValue'])
+
         # Set the x-axis direction
         plotter.set_x_range(ascending=x_ascending)
 
